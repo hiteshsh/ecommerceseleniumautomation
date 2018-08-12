@@ -1,0 +1,11 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="test suite for shopping">
+
+    <test name="shoppingFunctional Test on Chrome Browser">
+        <parameter name="browser" value="chrome"/>
+        <classes>
+            <class name="tests.BuyProductTest"/>
+        </classes>
+    </test>
+
+</suite>

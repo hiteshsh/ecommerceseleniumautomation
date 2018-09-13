@@ -16,7 +16,7 @@ import static Model.Category.WOMEN;
  */
 public class BuyProductTest extends BaseTest {
 
-    //@Test
+    @Test
     public void buyAProductFromWomenCategory()  {
         List<Product> productList= new ArrayList<Product>();
         Product product= new Product();
@@ -39,7 +39,7 @@ public class BuyProductTest extends BaseTest {
 
     }
 
-    //@Test
+    @Test
     public void buyMultipleProductFromWomenCategory(){
         List<Product> productList= new ArrayList<Product>();
         Product product= new Product();
@@ -87,8 +87,42 @@ public class BuyProductTest extends BaseTest {
                 .shouldDisplayProductSuccesfullyAddedMessage()
                 .shouldDisplayAddedProductDetails(product)
                 .checkoutProducts()
-                .addQuantity(2,"Faded Short Sleeve T-shirts")
+                .addQuantityForProduct("Faded Short Sleeve T-shirts",1)
                 .shouldDisplayTotalProduct(3)
+                .shouldDisplayAllProduct(productList)
+                .shouldDisplayPriceBreakUp(productList)
+                .confirmCheckout();
+
+    }
+
+    @Test
+    public void buyMultipleProductWithMoreQuantity(){
+
+        List<Product> productList= new ArrayList<Product>();
+        Product product= new Product();
+        product.setProductDesc("Faded Short Sleeve T-shirts");
+        product.setUnitPrice(16.51);
+        product.setQuantity(2);
+        productList.add(product);
+
+        Product product1= new Product();
+        product1.setProductDesc("Blouse");
+        product1.setUnitPrice(27.00);
+        product1.setQuantity(2);
+        productList.add(product1);
+
+        NavigationMenu menu= new NavigationMenu(driver);
+
+        menu.navigateToCategory(WOMEN)
+                .addProductToCart("Faded Short Sleeve T-shirts","1")
+                .shouldDisplayProductSuccesfullyAddedMessage()
+                .continueShopping()
+                .addProductToCart("Blouse","2")
+                .shouldDisplayProductSuccesfullyAddedMessage()
+                .checkoutProducts()
+                .addQuantityForProduct("Faded Short Sleeve T-shirts",1)
+                .addQuantityForProduct("Blouse",1)
+                .shouldDisplayTotalProduct(4)
                 .shouldDisplayAllProduct(productList)
                 .shouldDisplayPriceBreakUp(productList)
                 .confirmCheckout();

@@ -87,7 +87,7 @@ public class BuyProductTest extends BaseTest {
                 .shouldDisplayProductSuccesfullyAddedMessage()
                 .shouldDisplayAddedProductDetails(product)
                 .checkoutProducts()
-                .addQuantity(2,"1")
+                .addQuantity(2,"Faded Short Sleeve T-shirts")
                 .shouldDisplayTotalProduct(3)
                 .shouldDisplayAllProduct(productList)
                 .shouldDisplayPriceBreakUp(productList)

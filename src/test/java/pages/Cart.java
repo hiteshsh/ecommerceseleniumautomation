@@ -137,12 +137,22 @@ public class Cart {
         return this;
     }
 
-    public Cart addQuantity(int quantity,String productId) {
+    public Cart addQuantity(int quantity,String productName) {
         System.out.println("Adding quantity");
-        WebElement quantityEl=driver.findElement(By.cssSelector("td[class='cart_quantity text-center']>input"));
+        WebElement productRow=null;
+        WebElement cartSummary=driver.findElement(By.id("cart_summary")).findElement(By.tagName("tbody"));
+        List<WebElement> listOfProductsElement=cartSummary.findElements(By.tagName("tr"));
+        for (WebElement element:listOfProductsElement){
+            if (element.getText().contains(productName)){
+                productRow=element;
+                break;
+            }
+        }
+
+        WebElement quantityEl=productRow.findElement(By.cssSelector("td[class='cart_quantity text-center']>input"));
         System.out.println("quantity**"+quantityEl.getAttribute("value"));
         Integer currentQuantity= Integer.valueOf(quantityEl.getAttribute("value"));
-        WebElement add=driver.findElement(By.cssSelector("a[title='Add'][href*='id_product="+productId+"']"));
+        WebElement add=productRow.findElement(By.cssSelector("a[title='Add']"));
         wait.until(ExpectedConditions.elementToBeClickable(add));
 
         for(int i=0;i<quantity;i++){

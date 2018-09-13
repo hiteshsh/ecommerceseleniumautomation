@@ -16,7 +16,7 @@ public class BaseTest {
     protected WebDriver driver;
 
     @Parameters({"browser"})
-    @BeforeTest(alwaysRun = true)
+    @BeforeMethod(alwaysRun = true)
     public void setup(String browser){
         System.out.println("*****"+browser);
         driver=new DriverFactory().getDriver(browser);
@@ -26,8 +26,11 @@ public class BaseTest {
         driver.get("http://automationpractice.com/");
     }
 
-    @AfterTest(alwaysRun = true)
+    @AfterMethod(alwaysRun = true)
     public void teardown(){
+        System.out.println("*****Closing browser*****");
+        driver.manage().deleteAllCookies();
         driver.quit();
+
     }
 }

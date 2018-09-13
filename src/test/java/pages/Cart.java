@@ -10,6 +10,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 import utils.Util;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -50,7 +51,11 @@ public class Cart {
     }
 
     public Cart shouldDisplayTotalProduct(int quantity){
+        if(quantity>1)
+         Assert.assertEquals(quantity+" Products",driver.findElement(By.id("summary_products_quantity")).getText());
+        else
          Assert.assertEquals(quantity+" Product",driver.findElement(By.id("summary_products_quantity")).getText());
+
          return this;
     }
 
@@ -58,25 +63,26 @@ public class Cart {
         PriceBreakup priceBreakup= calculatePrice(products);
         double totalWithShipping= priceBreakup.getShipping()+priceBreakup.getTotal();
         double total=priceBreakup.getTax()+totalWithShipping;
-        Assert.assertEquals(Double.valueOf(driver.findElement(By.id("total_product")).getText().replace("$",""))
-                ,priceBreakup.getTotal());
-        Assert.assertEquals(Double.valueOf(driver.findElement(By.id("total_shipping")).getText().replace("$",""))
-                ,priceBreakup.getShipping());
-        Assert.assertEquals(Double.valueOf(driver.findElement(By.id("total_price_without_tax")).getText().replace("$",""))
-                ,totalWithShipping);
-        Assert.assertEquals(Double.valueOf(driver.findElement(By.id("total_tax")).getText().replace("$",""))
-                ,priceBreakup.getTax());
-        Assert.assertEquals(Double.valueOf(driver.findElement(By.id("total_price_container")).getText().replace("$",""))
-                ,total);
+        Assert.assertEquals(driver.findElement(By.id("total_product")).getText().replace("$","")
+                ,String.format("%.2f",priceBreakup.getTotal()));
+        Assert.assertEquals(driver.findElement(By.id("total_shipping")).getText().replace("$","")
+                ,String.format("%.2f",priceBreakup.getShipping()));
+        Assert.assertEquals(driver.findElement(By.id("total_price_without_tax")).getText().replace("$","")
+                ,String.format("%.2f",totalWithShipping));
+        Assert.assertEquals(driver.findElement(By.id("total_tax")).getText().replace("$","")
+                ,String.format("%.2f",priceBreakup.getTax()));
+        Assert.assertEquals(driver.findElement(By.id("total_price_container")).getText().replace("$","")
+                ,String.format("%.2f",total));
 
         return this;
 
     }
     private PriceBreakup calculatePrice(List<Product> products){
+       DecimalFormat df2 = new DecimalFormat(".##");
         PriceBreakup priceBreakup= new PriceBreakup();
         double totalPrice=0;
         for (Product product: products) {
-            totalPrice=totalPrice+product.getQuantity()*product.getUnitPrice();
+            totalPrice=totalPrice+(product.getQuantity()*product.getUnitPrice());
         }
         priceBreakup.setTotal(totalPrice);
         priceBreakup.setShipping(2);

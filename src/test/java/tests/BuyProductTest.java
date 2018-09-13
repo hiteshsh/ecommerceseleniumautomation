@@ -16,7 +16,7 @@ import static Model.Category.WOMEN;
  */
 public class BuyProductTest extends BaseTest {
 
-    //@Test
+    @Test
     public void buyAProductFromWomenCategory()  {
         List<Product> productList= new ArrayList<Product>();
         Product product= new Product();
@@ -28,7 +28,7 @@ public class BuyProductTest extends BaseTest {
         NavigationMenu menu= new NavigationMenu(driver);
 
         menu.navigateToCategory(WOMEN)
-                .addProductToCart("Faded Short Sleeve T-shirts")
+                .addProductToCart("Faded Short Sleeve T-shirts","1")
                 .shouldDisplayProductSuccesfullyAddedMessage()
                 .shouldDisplayAddedProductDetails(product)
                 .checkoutProducts()
@@ -57,10 +57,10 @@ public class BuyProductTest extends BaseTest {
         NavigationMenu menu= new NavigationMenu(driver);
 
         menu.navigateToCategory(WOMEN)
-                .addProductToCart("Faded Short Sleeve T-shirts")
+                .addProductToCart("Faded Short Sleeve T-shirts","1")
                 .shouldDisplayProductSuccesfullyAddedMessage()
                 .continueShopping()
-                .addProductToCart("Blouse")
+                .addProductToCart("Blouse","2")
                 .shouldDisplayProductSuccesfullyAddedMessage()
                 .checkoutProducts()
                 .shouldDisplayTotalProduct(2)

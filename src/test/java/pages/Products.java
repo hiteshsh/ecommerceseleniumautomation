@@ -29,7 +29,7 @@ public class Products {
         wait= new WebDriverWait(this.driver,10);
     }
 
-    public Cart addProductToCart(String productName){
+    public Cart addProductToCart(String productName, String productId){
 
         WebElement productList= driver.findElement(By.className("product_list"));
         Util.scrollToElement(productList,driver);
@@ -37,7 +37,8 @@ public class Products {
         //wait.until(ExpectedConditions.visibilityOf(product));
         Actions builder= new Actions(driver);
         builder.moveToElement(product).build().perform();
-        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//span[contains(text(),'Add to cart')]"))).click();
+        //wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//span[contains(text(),'Add to cart')]"))).click();
+        wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("a[data-id-product='"+productId+"']"))).click();
         return new Cart(driver);
 
     }

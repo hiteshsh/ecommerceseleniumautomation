@@ -16,7 +16,7 @@ import static Model.Category.WOMEN;
  */
 public class BuyProductTest extends BaseTest {
 
-    @Test
+    //@Test
     public void buyAProductFromWomenCategory()  {
         List<Product> productList= new ArrayList<Product>();
         Product product= new Product();
@@ -39,7 +39,7 @@ public class BuyProductTest extends BaseTest {
 
     }
 
-    @Test
+    //@Test
     public void buyMultipleProductFromWomenCategory(){
         List<Product> productList= new ArrayList<Product>();
         Product product= new Product();
@@ -64,6 +64,31 @@ public class BuyProductTest extends BaseTest {
                 .shouldDisplayProductSuccesfullyAddedMessage()
                 .checkoutProducts()
                 .shouldDisplayTotalProduct(2)
+                .shouldDisplayAllProduct(productList)
+                .shouldDisplayPriceBreakUp(productList)
+                .confirmCheckout();
+
+    }
+
+    @Test
+    public void buyAProductWithMoreQuantity(){
+
+        List<Product> productList= new ArrayList<Product>();
+        Product product= new Product();
+        product.setProductDesc("Faded Short Sleeve T-shirts");
+        product.setUnitPrice(16.51);
+        product.setQuantity(3);
+        productList.add(product);
+
+        NavigationMenu menu= new NavigationMenu(driver);
+
+        menu.navigateToCategory(WOMEN)
+                .addProductToCart("Faded Short Sleeve T-shirts","1")
+                .shouldDisplayProductSuccesfullyAddedMessage()
+                .shouldDisplayAddedProductDetails(product)
+                .checkoutProducts()
+                .addQuantity(2,"1")
+                .shouldDisplayTotalProduct(3)
                 .shouldDisplayAllProduct(productList)
                 .shouldDisplayPriceBreakUp(productList)
                 .confirmCheckout();

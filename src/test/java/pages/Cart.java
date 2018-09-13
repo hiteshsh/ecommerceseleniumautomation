@@ -51,10 +51,11 @@ public class Cart {
     }
 
     public Cart shouldDisplayTotalProduct(int quantity){
+        String expectedQuantity=driver.findElement(By.id("summary_products_quantity")).getText();
         if(quantity>1)
-         Assert.assertEquals(quantity+" Products",driver.findElement(By.id("summary_products_quantity")).getText());
+         Assert.assertEquals(expectedQuantity,quantity+" Products");
         else
-         Assert.assertEquals(quantity+" Product",driver.findElement(By.id("summary_products_quantity")).getText());
+         Assert.assertEquals(expectedQuantity,quantity+" Product");
 
          return this;
     }
@@ -131,7 +132,26 @@ public class Cart {
 
     public Cart shouldDisplayAddedProductDetails(Product product) {
         Assert.assertEquals(driver.findElement(By.id("layer_cart_product_title")).getText(),product.getProductDesc());
-        Assert.assertEquals(driver.findElement(By.id("layer_cart_product_quantity")).getText(),String.valueOf(product.getQuantity()));
+        //Assert.assertEquals(driver.findElement(By.id("layer_cart_product_quantity")).getText(),String.valueOf(product.getQuantity()));
+
+        return this;
+    }
+
+    public Cart addQuantity(int quantity,String productId) {
+        System.out.println("Adding quantity");
+        WebElement quantityEl=driver.findElement(By.cssSelector("td[class='cart_quantity text-center']>input"));
+        System.out.println("quantity**"+quantityEl.getAttribute("value"));
+        Integer currentQuantity= Integer.valueOf(quantityEl.getAttribute("value"));
+        WebElement add=driver.findElement(By.cssSelector("a[title='Add'][href*='id_product="+productId+"']"));
+        wait.until(ExpectedConditions.elementToBeClickable(add));
+
+        for(int i=0;i<quantity;i++){
+            System.out.println("Clicking add");
+            add.click();
+            wait.until(ExpectedConditions.attributeToBe(quantityEl,"value",String.valueOf(currentQuantity+1)));
+            currentQuantity=currentQuantity+1;
+        }
+
 
         return this;
     }

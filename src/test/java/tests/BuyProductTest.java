@@ -4,7 +4,7 @@ import Model.Product;
 import org.testng.annotations.Test;
 import pages.Cart;
 import pages.NavigationMenu;
-import pages.ProductPage;
+import pages.Products;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +16,7 @@ import static Model.Category.WOMEN;
  */
 public class BuyProductTest extends BaseTest {
 
-    @Test
+    //@Test
     public void buyAProductFromWomenCategory()  {
         List<Product> productList= new ArrayList<Product>();
         Product product= new Product();
@@ -26,17 +26,47 @@ public class BuyProductTest extends BaseTest {
         productList.add(product);
 
         NavigationMenu menu= new NavigationMenu(driver);
-        menu.navigateToCategory(WOMEN);
 
-        ProductPage productpage= new ProductPage(driver);
-        productpage.addProductToCart("Faded Short Sleeve T-shirts");
+        menu.navigateToCategory(WOMEN)
+                .addProductToCart("Faded Short Sleeve T-shirts")
+                .shouldDisplayProductSuccesfullyAddedMessage()
+                .shouldDisplayAddedProductDetails(product)
+                .checkoutProducts()
+                .shouldDisplayTotalProduct(1)
+                .shouldDisplayAllProduct(productList)
+                .shouldDisplayPriceBreakUp(productList)
+                .confirmCheckout();
 
-        Cart cart= new Cart(driver);
-        cart.checkoutProducts();
-        cart.shouldDisplayTotalProduct(1);
-        cart.shouldDisplayAllProduct(productList);
-        cart.shouldDisplayPriceBreakUp(productList);
-        cart.confirmCheckout();
+    }
+
+    @Test
+    public void buyMultipleProductFromWomenCategory(){
+        List<Product> productList= new ArrayList<Product>();
+        Product product= new Product();
+        product.setProductDesc("Faded Short Sleeve T-shirts");
+        product.setUnitPrice(16.51);
+        product.setQuantity(1);
+        productList.add(product);
+
+        Product product1= new Product();
+        product1.setProductDesc("Blouse");
+        product1.setUnitPrice(27.00);
+        product1.setQuantity(1);
+        productList.add(product1);
+
+        NavigationMenu menu= new NavigationMenu(driver);
+
+        menu.navigateToCategory(WOMEN)
+                .addProductToCart("Faded Short Sleeve T-shirts")
+                .shouldDisplayProductSuccesfullyAddedMessage()
+                .continueShopping()
+                .addProductToCart("Blouse")
+                .shouldDisplayProductSuccesfullyAddedMessage()
+                .checkoutProducts()
+                .shouldDisplayTotalProduct(2)
+                .shouldDisplayAllProduct(productList)
+                .shouldDisplayPriceBreakUp(productList)
+                .confirmCheckout();
 
     }
 

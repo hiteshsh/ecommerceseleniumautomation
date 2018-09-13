@@ -10,6 +10,8 @@ import org.openqa.selenium.support.PageFactory;
  */
 public class NavigationMenu {
 
+    private WebDriver driver;
+
     @FindBy(xpath = "//a[contains(@title,'Women')]")
     private WebElement categoryWomen;
     @FindBy(xpath = "//a[contains(@title,'Dresses')]")
@@ -18,10 +20,11 @@ public class NavigationMenu {
     private WebElement categorytShirt;
 
     public NavigationMenu(WebDriver driver){
+        this.driver=driver;
         PageFactory.initElements(driver,this);
     }
 
-    public void navigateToCategory(Enum Category){
+    public Products navigateToCategory(Enum Category){
         if (Category.name().equalsIgnoreCase("WOMEN")) {
             categoryWomen.click();
         }
@@ -31,6 +34,7 @@ public class NavigationMenu {
         else{
             categorytShirt.click();
         }
+        return new Products(driver);
 
     }
 }

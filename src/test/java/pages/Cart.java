@@ -3,10 +3,8 @@ package pages;
 import Model.PriceBreakup;
 import Model.Product;
 import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
@@ -22,8 +20,10 @@ import java.util.List;
 public class Cart {
 
     private WebDriver driver;
+    private WebDriverWait wait;
 
     public Cart(WebDriver driver){
+        wait= new WebDriverWait(driver,20);
         this.driver= driver;
     }
 
@@ -49,13 +49,12 @@ public class Cart {
         return productList;
     }
 
-    public void shouldDisplayTotalProduct(int quantity){
+    public Cart shouldDisplayTotalProduct(int quantity){
          Assert.assertEquals(quantity+" Product",driver.findElement(By.id("summary_products_quantity")).getText());
+         return this;
     }
 
-    public void shouldDisplayPriceBreakUp(List<Product> products){
-        //WebElement checkoutLink= driver.findElement(By.xpath("//a[contains(@title,'Proceed to checkout')]"));
-        //Util.scrollToElement(checkoutLink,driver);
+    public Cart shouldDisplayPriceBreakUp(List<Product> products){
         PriceBreakup priceBreakup= calculatePrice(products);
         double totalWithShipping= priceBreakup.getShipping()+priceBreakup.getTotal();
         double total=priceBreakup.getTax()+totalWithShipping;
@@ -69,6 +68,8 @@ public class Cart {
                 ,priceBreakup.getTax());
         Assert.assertEquals(Double.valueOf(driver.findElement(By.id("total_price_container")).getText().replace("$",""))
                 ,total);
+
+        return this;
 
     }
     private PriceBreakup calculatePrice(List<Product> products){
@@ -84,7 +85,7 @@ public class Cart {
     }
 
 
-    public void shouldDisplayAllProduct(List<Product> expectedProductList){
+    public Cart shouldDisplayAllProduct(List<Product> expectedProductList){
         List<Product> actualProductList=getAllProductsDetailsFromCartSummary();
         Iterator<Product> iteratorActual=actualProductList.iterator();
         Iterator<Product> iteratorExpected=expectedProductList.iterator();
@@ -94,11 +95,13 @@ public class Cart {
             Assert.assertEquals(actual.getProductDesc(),expected.getProductDesc());
             Assert.assertEquals(actual.getUnitPrice(),expected.getUnitPrice());
         }
+        return this;
     }
 
-    public void checkoutProducts(){
-        WebDriverWait wait= new WebDriverWait(driver,20);
+    public Cart checkoutProducts(){
+
         wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//a[contains(@title,'Proceed to checkout')]"))).click();
+        return this;
     }
 
     public void confirmCheckout(){
@@ -106,5 +109,24 @@ public class Cart {
         WebElement checkoutLink= driver.findElement(By.cssSelector("a.button.standard-checkout"));
         Util.scrollToElement(checkoutLink,driver);
         checkoutLink.click();
+    }
+
+    public Products continueShopping() {
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//span[contains(@title,'Continue shopping')]"))).click();
+        return new Products(driver);
+    }
+
+    public Cart shouldDisplayProductSuccesfullyAddedMessage(){
+        String message=wait.until(ExpectedConditions.visibilityOf(
+                driver.findElement(By.className("layer_cart_product>h2")))).getText();
+        Assert.assertEquals(message,"Product successfully added to your shopping cart");
+        return this;
+    }
+
+    public Cart shouldDisplayAddedProductDetails(Product product) {
+        Assert.assertEquals(driver.findElement(By.id("layer_cart_product_title")).getText(),product.getProductDesc());
+        Assert.assertEquals(driver.findElement(By.id("layer_cart_product_quantity")).getText(),String.valueOf(product.getQuantity()));
+
+        return this;
     }
 }

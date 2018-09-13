@@ -18,9 +18,8 @@ public class BaseTest {
     @Parameters({"browser"})
     @BeforeMethod(alwaysRun = true)
     public void setup(String browser){
-        System.out.println("*****"+browser);
+        System.out.println("***** Starting "+browser+" Browser ");
         driver=new DriverFactory().getDriver(browser);
-        System.out.println("**driver**"+driver.toString());
         driver.manage().window().maximize();
         driver.manage().timeouts().implicitlyWait(15, TimeUnit.SECONDS);
         driver.get("http://automationpractice.com/");

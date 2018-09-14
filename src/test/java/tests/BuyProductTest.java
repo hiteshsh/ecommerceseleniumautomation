@@ -1,10 +1,10 @@
 package tests;
 
 import Model.Product;
+import Model.User;
+import factory.UserFactory;
 import org.testng.annotations.Test;
-import pages.Cart;
-import pages.NavigationMenu;
-import pages.Products;
+import pages.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +36,21 @@ public class BuyProductTest extends BaseTest {
                 .shouldDisplayAllProduct(productList)
                 .shouldDisplayPriceBreakUp(productList)
                 .confirmCheckout();
+
+        User user= UserFactory.getValidUser();
+        SignIn signIn= new SignIn(driver);
+        signIn.SignIn(user.getEmail(),user.getPassword());
+
+        Shipping shipping= new Shipping(driver);
+        shipping.shouldDisplayShippingAddress(user)
+                .addComments()
+                .proceedToShipping()
+                .shouldDisplayCarrierCharges()
+                .agreeTermsAndCondtion()
+                .proceedToPayment()
+                .payByCheck()
+                .confirmOrder()
+                .shouldDisplayOrderSuccessMessage();
 
     }
 

@@ -5,6 +5,8 @@ import Model.Product;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Action;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
@@ -190,12 +192,9 @@ public class Cart {
 
     public void productShouldNotBeAvailableInCart(String productName) {
         By alertBy=By.cssSelector("p.alert-warning");
-        System.out.println("before asserting****");
         wait.until(ExpectedConditions.textToBe(alertBy,"Your shopping cart is empty."));
         WebElement alert=driver.findElement(alertBy);
-        System.out.println("asserting****");
         Assert.assertNull(findProductByName(productName));
-        System.out.println("after asserting****");
     }
 
     private boolean isCartEmpty(){
@@ -205,6 +204,44 @@ public class Cart {
          }
          else
              return true;
+    }
+
+    public void removeProductFromCartBlock(String productName) {
+
+        List<WebElement> productList=driver.findElements(By.cssSelector("dl.products>dt"));
+
+        for (WebElement productrow:productList
+             ) {
+            String prodtitle=productrow.findElement(By.cssSelector(".cart-info a.cart_block_product_name")).getAttribute("title");
+            if (prodtitle.equalsIgnoreCase(productName)){
+                productrow.findElement(By.cssSelector("span>a")).click();
+                break;
+            }
+        }
+
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+    public Cart goToCartBlock() {
+
+        WebElement productBlock=driver.findElement(By.xpath("//a[contains(@title,'View my shopping cart')]"));
+        Util.scrollToElement(productBlock,driver);
+        Actions builder= new Actions(driver);
+        builder.moveToElement(productBlock).build().perform();
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return this;
+
     }
 }
 

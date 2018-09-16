@@ -2,6 +2,7 @@ package tests;
 
 import Model.Product;
 import org.testng.annotations.Test;
+import pages.Cart;
 import pages.NavigationMenu;
 
 import java.util.ArrayList;
@@ -14,7 +15,27 @@ import static Model.Category.WOMEN;
  */
 public class CartTest extends BaseTest{
 
+    @Test
     public void removeProductFromTopCartSection(){
+
+        List<Product> productList= new ArrayList<Product>();
+        Product product= new Product();
+        product.setProductDesc("Faded Short Sleeve T-shirts");
+        product.setUnitPrice(16.51);
+        product.setQuantity(1);
+        productList.add(product);
+
+        NavigationMenu menu= new NavigationMenu(driver);
+
+        menu.navigateToCategory(WOMEN)
+                .addProductToCart("Faded Short Sleeve T-shirts","1")
+                .shouldDisplayProductSuccesfullyAddedMessage()
+                .shouldDisplayAddedProductDetails(product)
+                .continueShopping();
+
+        Cart cartDropdownBlock= new Cart(driver);
+        cartDropdownBlock.goToCartBlock().removeProductFromCartBlock("Faded Short Sleeve T-shirts");
+
 
     }
 

@@ -161,4 +161,51 @@ public class Cart {
 
         return this;
     }
+
+    public Cart removeProductFromCart(String productName) {
+        WebElement productRow=findProductByName(productName);
+        WebElement delete=productRow.findElement(By.className("cart_quantity_delete"));
+        wait.until(ExpectedConditions.elementToBeClickable(delete)).click();
+        
+        return this;
+
+    }
+
+    private WebElement findProductByName(String productName){
+        WebElement productRow=null;
+        if (isCartEmpty()){
+            return productRow;
+        }
+        WebElement cartSummary=driver.findElement(By.id("cart_summary")).findElement(By.tagName("tbody"));
+        List<WebElement> listOfProductsElement=cartSummary.findElements(By.tagName("tr"));
+        for (WebElement element:listOfProductsElement){
+            if (element.getText().contains(productName)){
+                productRow=element;
+                break;
+            }
+        }
+        return productRow;
+
+    }
+
+    public void productShouldNotBeAvailableInCart(String productName) {
+        By alertBy=By.cssSelector("p.alert-warning");
+        System.out.println("before asserting****");
+        wait.until(ExpectedConditions.textToBe(alertBy,"Your shopping cart is empty."));
+        WebElement alert=driver.findElement(alertBy);
+        System.out.println("asserting****");
+        Assert.assertNull(findProductByName(productName));
+        System.out.println("after asserting****");
+    }
+
+    private boolean isCartEmpty(){
+         List<WebElement> cartsize=driver.findElements(By.cssSelector("#center_column table"));
+         if (cartsize!=null) {
+             return !(cartsize.size() > 0);
+         }
+         else
+             return true;
+    }
 }
+
+

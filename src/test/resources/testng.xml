@@ -4,7 +4,8 @@
     <test name="shoppingFunctional Test on Chrome Browser">
         <parameter name="browser" value="chrome"/>
         <classes>
-            <class name="tests.BuyProductTest"/>
+            <!--<class name="tests.BuyProductTest"/>-->
+            <!--<class name="tests.CartTest"/>-->
         </classes>
     </test>
 

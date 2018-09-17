@@ -34,10 +34,14 @@ public class CartTest extends BaseTest{
                 .continueShopping();
 
         Cart cartDropdownBlock= new Cart(driver);
-        cartDropdownBlock.goToCartBlock().removeProductFromCartBlock("Faded Short Sleeve T-shirts");
+        cartDropdownBlock.viewCartBlock()
+                .productShouldBeInCartBlock("Faded Short Sleeve T-shirts")
+                .removeProductFromCartBlock("Faded Short Sleeve T-shirts")
+                .productShouldNotBeInCartBlock("Faded Short Sleeve T-shirts");
 
 
     }
+
 
     @Test
     public void removeProductFromCartPage(){

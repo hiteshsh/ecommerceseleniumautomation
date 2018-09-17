@@ -2,11 +2,12 @@ package pages;
 
 import Model.PriceBreakup;
 import Model.Product;
+import org.checkerframework.checker.nullness.compatqual.NullableDecl;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Action;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
@@ -16,6 +17,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Function;
 
 /**
  * Created by hiteshs on 4/10/18.
@@ -165,10 +167,11 @@ public class Cart {
     }
 
     public Cart removeProductFromCart(String productName) {
+        List<WebElement> productList=driver.findElements(By.cssSelector("#cart_summary tbody tr"));
         WebElement productRow=findProductByName(productName);
         WebElement delete=productRow.findElement(By.className("cart_quantity_delete"));
         wait.until(ExpectedConditions.elementToBeClickable(delete)).click();
-        
+        wait.until(ExpectedConditions.numberOfElementsToBe(By.cssSelector("#cart_summary tbody tr"),productList.size()-1));
         return this;
 
     }
@@ -178,8 +181,7 @@ public class Cart {
         if (isCartEmpty()){
             return productRow;
         }
-        WebElement cartSummary=driver.findElement(By.id("cart_summary")).findElement(By.tagName("tbody"));
-        List<WebElement> listOfProductsElement=cartSummary.findElements(By.tagName("tr"));
+        List<WebElement> listOfProductsElement=driver.findElements(By.cssSelector("#cart_summary tbody tr"));
         for (WebElement element:listOfProductsElement){
             if (element.getText().contains(productName)){
                 productRow=element;
@@ -191,9 +193,6 @@ public class Cart {
     }
 
     public void productShouldNotBeAvailableInCart(String productName) {
-        By alertBy=By.cssSelector("p.alert-warning");
-        wait.until(ExpectedConditions.textToBe(alertBy,"Your shopping cart is empty."));
-        WebElement alert=driver.findElement(alertBy);
         Assert.assertNull(findProductByName(productName));
     }
 
@@ -206,9 +205,10 @@ public class Cart {
              return true;
     }
 
-    public void removeProductFromCartBlock(String productName) {
+    public Cart removeProductFromCartBlock(String productName) {
 
         List<WebElement> productList=driver.findElements(By.cssSelector("dl.products>dt"));
+        System.out.println("size: "+productList.size());
 
         for (WebElement productrow:productList
              ) {
@@ -219,29 +219,49 @@ public class Cart {
             }
         }
 
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        List<WebElement> productList1=driver.findElements(By.cssSelector("dl.products>dt"));
+        System.out.println("size: "+productList1.size());
+        wait.until(ExpectedConditions.numberOfElementsToBe(By.cssSelector("dl.products>dt"),productList.size()-1));
+        return this;
 
 
     }
 
-    public Cart goToCartBlock() {
+    public Cart viewCartBlock() {
 
         WebElement productBlock=driver.findElement(By.xpath("//a[contains(@title,'View my shopping cart')]"));
         Util.scrollToElement(productBlock,driver);
         Actions builder= new Actions(driver);
         builder.moveToElement(productBlock).build().perform();
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
+        wait.until(ExpectedConditions.visibilityOfAllElements(driver.findElements(By.cssSelector("dl.products>dt"))));
         return this;
+    }
 
+    public void productShouldNotBeInCartBlock(String productname) {
+        Assert.assertNull(findProductByNameInCartBlock(productname));
+
+    }
+
+    public WebElement findProductByNameInCartBlock(String productName){
+        WebElement element=null;
+        List<WebElement> productList=driver.findElements(By.cssSelector("dl.products>dt"));
+        if (productList!=null&& productList.size()>0) {
+            for (WebElement productrow:
+                 productList) {
+                String prodtitle=productrow.findElement(By.cssSelector(".cart-info a.cart_block_product_name")).getAttribute("title");
+                if (prodtitle.equalsIgnoreCase(productName)){
+                    element=productrow;
+                    break;
+                }
+            }
+        }
+        return element;
+
+    }
+
+    public Cart productShouldBeInCartBlock(String productName) {
+        Assert.assertNotNull(findProductByNameInCartBlock(productName));
+        return this;
     }
 }
 

@@ -14,7 +14,7 @@ public class Util {
         JavascriptExecutor js = (JavascriptExecutor) driver;
         js.executeScript("arguments[0].scrollIntoView()",element);
     }
-    public static void waiting(long time){
+    public static void waiFor(long time){
 
         try {
             Thread.sleep(time);
